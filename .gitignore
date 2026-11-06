@@ -17,6 +17,10 @@ dist-ssr
 .env.*
 !.env.example
 
+# Prompts & Documentation
+_prompts
+_prompts/*
+
 
 # Editor directories and files
 .vscode/*

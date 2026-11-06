@@ -58,7 +58,7 @@ function AppContent() {
 
         <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-emerald-200/80 shadow-xs">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Ambiente Seguro • Neon Auth</span>
+          <span>Ambiente Seguro e Criptografado</span>
         </div>
       </header>
 
@@ -106,7 +106,7 @@ function AppContent() {
                   <CheckCircle2 className="w-3.5 h-3.5" />
                 </div>
                 <div className="text-xs text-slate-700">
-                  <strong className="block text-slate-900">Segurança com Neon Postgres</strong>
+                  <strong className="block text-slate-900">Segurança e Privacidade</strong>
                   Proteção de dados com criptografia e Row Level Security (RLS).
                 </div>
               </div>

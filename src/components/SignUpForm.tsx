@@ -79,7 +79,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
 
       if (result.success) {
         setSuccessMessage(
-          'Conta criada com sucesso! Sincronizando dados com o Neon...'
+          'Conta criada com sucesso! Sincronizando dados...'
         )
         setTimeout(() => {
           onSuccess()
@@ -279,11 +279,11 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
             )}
           </div>
 
-          {/* Destaque de segurança Neon */}
+          {/* Destaque de segurança */}
           <div className="rounded-lg bg-emerald-50/70 border border-emerald-100 p-2.5 flex items-center gap-2 text-xs text-emerald-800">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>
-              Conta integrada e sincronizada automaticamente no <strong>Neon Postgres</strong>.
+              Conta integrada e sincronizada automaticamente com alta segurança.
             </span>
           </div>
 

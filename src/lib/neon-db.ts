@@ -61,6 +61,13 @@ export interface ConsultaRecord {
   created_at: string
 }
 
+export interface PlanoAlimentarRecord {
+  id: string
+  paciente_id: string
+  conteudo: any
+  created_at: string
+}
+
 export interface PacienteSemRetorno {
   id: string
   nome: string
@@ -320,7 +327,11 @@ export async function getPacientesList(nutricionistaId: string): Promise<Pacient
 export async function getPacienteComHistorico(
   pacienteId: string,
   nutricionistaId: string
-): Promise<{ paciente: PacienteRecord; consultas: ConsultaRecord[] } | null> {
+): Promise<{
+  paciente: PacienteRecord
+  consultas: ConsultaRecord[]
+  planos: PlanoAlimentarRecord[]
+} | null> {
   try {
     const pacienteRows = await sql.query(
       `SELECT * FROM public.pacientes 
@@ -351,13 +362,102 @@ export async function getPacienteComHistorico(
       [pacienteId]
     )
 
+    let planosRows: any[] = []
+    try {
+      planosRows = await sql.query(
+        `SELECT 
+           id,
+           paciente_id,
+           conteudo,
+           created_at
+         FROM public.planos_alimentares
+         WHERE paciente_id = $1
+         ORDER BY created_at DESC;`,
+        [pacienteId]
+      )
+    } catch (e) {
+      console.warn('Tabela planos_alimentares não acessível ou vazia:', e)
+    }
+
     return {
       paciente: pacienteRows[0] as PacienteRecord,
       consultas: (consultaRows || []) as ConsultaRecord[],
+      planos: (planosRows || []) as PlanoAlimentarRecord[],
     }
   } catch (error) {
     console.error('Erro ao buscar histórico do paciente:', error)
     return null
+  }
+}
+
+/**
+ * Atualiza os dados de um paciente
+ */
+export async function updatePaciente(
+  pacienteId: string,
+  nutricionistaId: string,
+  data: Partial<PacienteRecord>
+): Promise<PacienteRecord | null> {
+  try {
+    const rows = await sql.query(
+      `UPDATE public.pacientes SET
+         nome = COALESCE($3, nome),
+         data_nascimento = $4,
+         sexo = $5,
+         telefone = $6,
+         whatsapp = $7,
+         email = $8,
+         peso_inicial = $9,
+         altura = $10,
+         objetivos = $11,
+         objetivo_texto = $12,
+         nivel_atividade = $13,
+         patologias = $14,
+         restricoes_alimentares = $15,
+         alergias = $16,
+         medicamentos = $17,
+         suplementos = $18,
+         refeicoes_por_dia = $19,
+         horario_acorda = $20,
+         horario_dorme = $21,
+         litros_agua = $22,
+         atividade_fisica = $23,
+         atividade_fisica_descricao = $24,
+         observacoes = $25
+       WHERE id = $1 AND nutricionista_id = $2
+       RETURNING *;`,
+      [
+        pacienteId,
+        nutricionistaId,
+        data.nome?.trim(),
+        data.data_nascimento || null,
+        data.sexo || null,
+        data.telefone?.trim() || null,
+        data.whatsapp?.trim() || null,
+        data.email?.trim().toLowerCase() || null,
+        data.peso_inicial != null && !isNaN(Number(data.peso_inicial)) ? Number(data.peso_inicial) : null,
+        data.altura != null && !isNaN(Number(data.altura)) ? Number(data.altura) : null,
+        data.objetivos && data.objetivos.length > 0 ? data.objetivos : null,
+        data.objetivo_texto?.trim() || null,
+        data.nivel_atividade || null,
+        data.patologias && data.patologias.length > 0 ? data.patologias : null,
+        data.restricoes_alimentares && data.restricoes_alimentares.length > 0 ? data.restricoes_alimentares : null,
+        data.alergias && data.alergias.length > 0 ? data.alergias : null,
+        data.medicamentos?.trim() || null,
+        data.suplementos?.trim() || null,
+        data.refeicoes_por_dia != null && !isNaN(Number(data.refeicoes_por_dia)) ? Number(data.refeicoes_por_dia) : null,
+        data.horario_acorda?.trim() || null,
+        data.horario_dorme?.trim() || null,
+        data.litros_agua != null && !isNaN(Number(data.litros_agua)) ? Number(data.litros_agua) : null,
+        typeof data.atividade_fisica === 'boolean' ? data.atividade_fisica : null,
+        data.atividade_fisica_descricao?.trim() || null,
+        data.observacoes?.trim() || null,
+      ]
+    )
+    return (rows[0] as PacienteRecord) || null
+  } catch (error) {
+    console.error('Erro ao atualizar paciente:', error)
+    throw error
   }
 }
 
@@ -473,6 +573,29 @@ export async function createConsulta(
     return (rows[0] as ConsultaRecord) || null
   } catch (error) {
     console.error('Erro ao registrar consulta no Neon:', error)
+    throw error
+  }
+}
+
+/**
+ * Salva um novo plano alimentar na tabela public.planos_alimentares
+ */
+export async function createPlanoAlimentar(
+  pacienteId: string,
+  conteudo: any
+): Promise<PlanoAlimentarRecord | null> {
+  try {
+    const rows = await sql.query(
+      `INSERT INTO public.planos_alimentares (
+         paciente_id,
+         conteudo
+       ) VALUES ($1, $2::jsonb)
+       RETURNING *;`,
+      [pacienteId, typeof conteudo === 'string' ? conteudo : JSON.stringify(conteudo)]
+    )
+    return (rows[0] as PlanoAlimentarRecord) || null
+  } catch (error) {
+    console.error('Erro ao salvar plano alimentar no Neon:', error)
     throw error
   }
 }

@@ -27,7 +27,7 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Badge } from './ui/badge'
 import { Card, CardContent } from './ui/card'
-import { createPaciente } from '@/lib/neon-db'
+import { createPaciente, createConsulta } from '@/lib/neon-db'
 
 interface NovoPacienteFormProps {
   nutricionistaId: string
@@ -95,6 +95,9 @@ export const NovoPacienteForm: React.FC<NovoPacienteFormProps> = ({
   // Aba 1 — Pessoal
   const [nome, setNome] = useState('')
   const [dataNascimento, setDataNascimento] = useState('')
+  const [dataInicioTratamento, setDataInicioTratamento] = useState(
+    new Date().toISOString().split('T')[0]
+  )
   const [sexo, setSexo] = useState<'Feminino' | 'Masculino' | 'Outro' | ''>('')
   const [whatsapp, setWhatsapp] = useState('')
   const [email, setEmail] = useState('')
@@ -324,6 +327,19 @@ export const NovoPacienteForm: React.FC<NovoPacienteFormProps> = ({
         observacoes: observacoes.trim() || null,
       })
 
+      // Prompt 5: Registra a data de início do tratamento como primeira consulta
+      if (newRecord?.id && dataInicioTratamento) {
+        try {
+          await createConsulta(newRecord.id, {
+            data_consulta: dataInicioTratamento,
+            peso: pesoFinal,
+            observacoes: 'Primeira consulta (início do tratamento)',
+          })
+        } catch (consultaErr) {
+          console.warn('Erro ao criar primeira consulta automática:', consultaErr)
+        }
+      }
+
       setSaveSuccess(true)
 
       // Aguarda 700ms para feedback visual e redireciona ao perfil do paciente
@@ -337,7 +353,7 @@ export const NovoPacienteForm: React.FC<NovoPacienteFormProps> = ({
     } catch (err: any) {
       console.error('Erro ao cadastrar paciente:', err)
       setErrorMessage(
-        err?.message || 'Ocorreu um erro ao salvar o paciente no Neon. Tente novamente.'
+        err?.message || 'Ocorreu um erro ao salvar o paciente. Tente novamente.'
       )
       setSaving(false)
     }
@@ -485,7 +501,7 @@ export const NovoPacienteForm: React.FC<NovoPacienteFormProps> = ({
                     />
                   </div>
 
-                  {/* Data de Nascimento com Idade Calculada */}
+                  {/* Data de Nascimento e Início do Tratamento */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
@@ -509,27 +525,47 @@ export const NovoPacienteForm: React.FC<NovoPacienteFormProps> = ({
                       </div>
                     </div>
 
-                    {/* Sexo (seleção única: Feminino, Masculino, Outro) */}
                     <div>
-                      <Label className="text-slate-800 font-semibold text-sm block mb-1.5">
-                        Sexo
-                      </Label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {(['Feminino', 'Masculino', 'Outro'] as const).map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            onClick={() => setSexo(s)}
-                            className={`py-2.5 px-3 rounded-xl border text-xs sm:text-sm font-medium transition-all ${
-                              sexo === s
-                                ? 'bg-emerald-50 border-emerald-500 text-emerald-800 font-bold shadow-xs'
-                                : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                            }`}
-                          >
-                            {s}
-                          </button>
-                        ))}
+                      <div className="flex items-center justify-between mb-1.5">
+                        <Label htmlFor="dataInicioTratamento" className="text-slate-800 font-semibold text-sm">
+                          Início do Tratamento (1ª Consulta)
+                        </Label>
+                        <span className="text-[11px] text-emerald-700 font-medium">
+                          Gera 1ª consulta
+                        </span>
                       </div>
+                      <div className="relative">
+                        <Input
+                          id="dataInicioTratamento"
+                          type="date"
+                          value={dataInicioTratamento}
+                          onChange={(e) => setDataInicioTratamento(e.target.value)}
+                          className="h-11 bg-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sexo (seleção única: Feminino, Masculino, Outro) */}
+                  <div>
+                    <Label className="text-slate-800 font-semibold text-sm block mb-1.5">
+                      Sexo
+                    </Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['Feminino', 'Masculino', 'Outro'] as const).map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setSexo(s)}
+                          className={`py-2.5 px-3 rounded-xl border text-xs sm:text-sm font-medium transition-all ${
+                            sexo === s
+                              ? 'bg-emerald-50 border-emerald-500 text-emerald-800 font-bold shadow-xs'
+                              : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
@@ -1316,7 +1352,7 @@ export const NovoPacienteForm: React.FC<NovoPacienteFormProps> = ({
               {saving ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                  Salvando no Neon...
+                  Salvando...
                 </>
               ) : saveSuccess ? (
                 <>

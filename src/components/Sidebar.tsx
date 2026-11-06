@@ -3,7 +3,6 @@ import {
   LayoutDashboard,
   Users,
   LogOut,
-  Database,
   ChevronRight,
   ShieldCheck,
   X,
@@ -139,25 +138,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           )
         })}
-
-        {/* Separador e Informações de Segurança */}
-        <div className="pt-6 px-3">
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
-              <Database className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Neon Serverless</span>
-            </div>
-            <p className="text-[11px] text-slate-500 leading-tight">
-              Dados sincronizados em tempo real com Row Level Security.
-            </p>
-            <div className="flex items-center gap-1.5 pt-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-medium text-emerald-700">
-                Conexão ativa e segura
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Rodapé do Menu com Perfil e Logout */}

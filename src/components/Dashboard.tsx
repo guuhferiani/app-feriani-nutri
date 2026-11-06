@@ -169,12 +169,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Status em tempo real */}
-            <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-3 py-1.5 rounded-full border border-emerald-200/60">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Neon em tempo real</span>
-            </div>
-
             {/* Botão de atualização manual */}
             <Button
               variant="outline"
@@ -182,7 +176,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               onClick={handleRefresh}
               disabled={refreshing}
               className="text-slate-600 hover:text-emerald-700 hover:border-emerald-200"
-              title="Recarregar dados do Neon"
+              title="Recarregar dados"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 mr-1.5 ${refreshing ? 'animate-spin text-emerald-600' : ''}`}
@@ -269,7 +263,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
               {/* OS 3 CARDS PRINCIPAIS DO PROMPT 3 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* CARD 1 — Total de pacientes ativos */}
+                {/* Total de pacientes ativos */}
                 <Card className="border-slate-200/80 hover:border-emerald-200 hover:shadow-lg transition-all duration-200 bg-white relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-0 opacity-60 transition-transform group-hover:scale-110" />
                   <CardHeader className="pb-2 relative z-10">
@@ -277,9 +271,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 ring-4 ring-emerald-50">
                         <Users className="w-6 h-6" />
                       </div>
-                      <Badge variant="outline" className="text-xs text-emerald-800 bg-emerald-50/50 border-emerald-200">
-                        Card 1
-                      </Badge>
                     </div>
                     <CardTitle className="text-sm font-semibold uppercase tracking-wider text-slate-500 pt-4">
                       Total de pacientes ativos
@@ -308,7 +299,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                   </CardContent>
                 </Card>
 
-                {/* CARD 2 — Consultas da semana */}
+                {/* Consultas da semana */}
                 <Card className="border-slate-200/80 hover:border-teal-200 hover:shadow-lg transition-all duration-200 bg-white relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -z-0 opacity-60 transition-transform group-hover:scale-110" />
                   <CardHeader className="pb-2 relative z-10">
@@ -316,9 +307,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <div className="p-3 rounded-2xl bg-teal-50 text-teal-600 ring-4 ring-teal-50">
                         <Calendar className="w-6 h-6" />
                       </div>
-                      <Badge variant="outline" className="text-xs text-teal-800 bg-teal-50/50 border-teal-200">
-                        Card 2
-                      </Badge>
                     </div>
                     <CardTitle className="text-sm font-semibold uppercase tracking-wider text-slate-500 pt-4">
                       Consultas da semana
@@ -346,7 +334,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 </Card>
               </div>
 
-              {/* CARD 3 — Pacientes sem retorno */}
+              {/* Pacientes sem retorno */}
               <Card className="border-slate-200/80 bg-white shadow-sm overflow-hidden">
                 <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/40">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -357,7 +345,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       <div>
                         <div className="flex items-center gap-2">
                           <CardTitle className="text-lg font-bold text-slate-900">
-                            Card 3 — Pacientes sem retorno
+                            Pacientes sem retorno
                           </CardTitle>
                           {metrics.pacientesSemRetorno.length > 0 && (
                             <Badge variant="warning" className="text-xs">
@@ -461,7 +449,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                 <span>Feriani Nutri &copy; {new Date().getFullYear()} — Painel Clínico</span>
                 <span className="flex items-center gap-1.5 text-emerald-700 font-medium">
                   <HeartPulse className="w-3.5 h-3.5" />
-                  Gestão Nutricional com Neon Serverless Postgres
+                  Gestão Nutricional Integrada
                 </span>
               </div>
             </div>
